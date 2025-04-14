@@ -1,0 +1,11 @@
+{
+  "name": "telegram-mini-app",
+  "version": "1.0.0",
+  "description": "A simple Telegram Mini App",
+  "scripts": {
+    "start": "serve"
+  },
+  "dependencies": {
+    "serve": "^14.2.1"
+  }
+} 
