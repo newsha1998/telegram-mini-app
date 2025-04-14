@@ -61,6 +61,23 @@
             margin: 0 auto 1rem;
             display: block;
             border: 3px solid white;
+            object-fit: cover;
+        }
+
+        .request-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-top: 1rem;
+            font-size: 1rem;
+            transition: background 0.3s ease;
+        }
+
+        .request-button:hover {
+            background: rgba(255, 255, 255, 0.3);
         }
     </style>
 </head>
@@ -71,6 +88,7 @@
         <div class="user-info">
             <img id="user-avatar" class="avatar" src="" alt="User Avatar">
             <p>Welcome to your personalized Telegram Mini App!</p>
+            <button id="request-photo" class="request-button">Show my profile picture</button>
         </div>
     </div>
 
@@ -87,13 +105,38 @@
         // Update the UI with user information
         document.getElementById('username').textContent = user?.first_name || 'there';
         
-        // Set user avatar if available
+        // Handle profile picture
         const avatarElement = document.getElementById('user-avatar');
-        if (user?.photo_url) {
-            avatarElement.src = user.photo_url;
-        } else {
-            avatarElement.style.display = 'none';
+        const requestButton = document.getElementById('request-photo');
+
+        function updateAvatar() {
+            if (user?.photo_url) {
+                avatarElement.src = user.photo_url;
+                requestButton.style.display = 'none';
+            } else {
+                avatarElement.style.display = 'none';
+                requestButton.style.display = 'block';
+            }
         }
+
+        // Initial check
+        updateAvatar();
+
+        // Handle photo request button click
+        requestButton.addEventListener('click', () => {
+            webApp.requestWriteAccess().then(() => {
+                // After getting write access, the photo_url should be available
+                const updatedUser = webApp.initDataUnsafe.user;
+                if (updatedUser?.photo_url) {
+                    avatarElement.style.display = 'block';
+                    avatarElement.src = updatedUser.photo_url;
+                    requestButton.style.display = 'none';
+                }
+            }).catch(() => {
+                // Handle the case when user denies access
+                alert('Please grant access to show your profile picture');
+            });
+        });
     </script>
 </body>
 </html> 
